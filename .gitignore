@@ -1,0 +1,59 @@
+# Build results
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Visual Studio / Rider
+.vs/
+.vscode/
+.idea/
+*.VC.db
+*.VC.opendb
+*.sln
+*.suo
+*.user
+*.userprefs
+*.opensdf
+*.sdf
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Packaging
+Build/
+DerivedDataCache/
+
+# Crash reports
+Saved/Crashes/
+
+# Auto-generated files
+*.generated.h
+
+# Ignore config backups
+*.ini.backup
+
+# Ignore Mac files
+*.dylib
+
+# Ignore Linux files
+*.so
+
+# Ignore Windows executables (build output)
+*.exe
+*.dll
+
+# Ignore Unreal build files
+*.target
+*.modules
+
+# Ignore IDE files
+*.code-workspace
