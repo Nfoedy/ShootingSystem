@@ -6,7 +6,7 @@
 
 L'idea è nata durante il **Master in Computer Game Development**, mentre iniziavo ad approfondire lo sviluppo di videogiochi e a progettare alcuni titoli personali, tra cui un possibile survival a tema zombie.
 
-Inizialmente pensavo di sviluppare questi giochi principalmente attraverso **Blueprint Visual Scripting**. Successivamente, approfondendo il linguaggio **C++** durante il Master, ho iniziato a considerare la possibilità di realizzare sistemi di gameplay anche attraverso il codice.
+Inizialmente pensavo di sviluppare questi giochi principalmente attraverso **Blueprint**. Successivamente, approfondendo il linguaggio **C++** durante il Master, ho iniziato a considerare la possibilità di realizzare sistemi di gameplay anche attraverso il codice.
 
 Da questa idea è nato **ShootingSystem**, concepito come una base tecnica indipendente da sviluppare progressivamente e integrare in progetti futuri, evitando di dover ricostruire ogni volta le stesse meccaniche.
 
