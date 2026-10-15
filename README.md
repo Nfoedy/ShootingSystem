@@ -72,4 +72,68 @@ Questa prima fase ha permesso di costruire una base funzionante sulla quale svil
 
 ### Shooting System
 
-La fase successiva prevedeva la creazione di un sistema di
+La fase successiva prevedeva la creazione di un sistema di armi capace di gestire lo sparo attraverso Line Trace, individuare gli oggetti colpiti e applicare eventuali danni.
+
+L'architettura era pensata per separare le responsabilità del Character da quelle delle armi, facilitando l'aggiunta di differenti tipologie di equipaggiamento.
+
+### Weapon Management
+
+Il sistema avrebbe dovuto comprendere la gestione delle munizioni, la ricarica, la frequenza di sparo e la possibilità di estendere il comportamento delle armi.
+
+Queste funzionalità rappresentavano parte della roadmap e non sono state completate nella versione attuale.
+
+---
+
+## 🧠 Development Focus
+
+Una parte importante del progetto era dedicata allo studio dell'organizzazione dei sistemi di gameplay in Unreal Engine.
+
+Lo sviluppo iniziale è stato realizzato utilizzando **Blueprint Visual Scripting**, con particolare attenzione a:
+
+- Character e Camera Components;
+- Enhanced Input System;
+- Gestione degli input del giocatore;
+- Character Movement;
+- Organizzazione dei Blueprint.
+
+La possibilità di utilizzare **C++** rappresentava un'ulteriore evoluzione del progetto, con l'obiettivo di approfondire lo sviluppo di sistemi più strutturati e riutilizzabili.
+
+L'idea era arrivare progressivamente a un'architettura nella quale Character, armi e sistemi di combattimento avessero responsabilità separate.
+
+---
+
+## 📌 Final Considerations
+
+**ShootingSystem** è nato principalmente dal desiderio di realizzare una base tecnica da riutilizzare nei miei futuri progetti personali.
+
+Durante lo sviluppo ho iniziato a comprendere meglio l'importanza di organizzare le funzionalità di gameplay in sistemi indipendenti, piuttosto che costruirle esclusivamente per un singolo videogioco.
+
+Il progetto mi ha inoltre accompagnato in una fase di apprendimento durante la quale stavo passando da uno sviluppo prevalentemente basato sui Blueprint a una maggiore conoscenza del C++.
+
+A causa degli impegni legati al Master, lo sviluppo è stato interrotto prima del completamento delle meccaniche principali di shooting.
+
+Nonostante questo, il progetto rimane un punto di partenza interessante per approfondire in futuro il **Gameplay Programming** e lo sviluppo di sistemi FPS modulari.
+
+---
+
+## 🔮 Future Developments
+
+L'obiettivo futuro è riprendere lo sviluppo del progetto e completare le funzionalità originariamente previste.
+
+Tra i principali sviluppi sono presenti:
+
+- **Weapon System:** implementazione di una classe base per gestire differenti tipologie di armi;
+- **Shooting:** sistema di sparo basato su Line Trace e Hit Detection;
+- **Damage System:** gestione dei danni e della salute dei bersagli;
+- **Ammunition:** caricatore, munizioni disponibili e ricarica;
+- **Fire Modes:** introduzione di modalità di sparo semiautomatiche e automatiche;
+- **Aiming:** sistema di mira e controllo del Recoil;
+- **Visual and Audio Feedback:** effetti di sparo, impatto e suoni;
+- **C++ Implementation:** possibile riorganizzazione dei sistemi attraverso classi C++;
+- **Multiplayer:** studio della replicazione e della gestione degli spari in rete.
+
+L'obiettivo finale rimane quello di costruire un sistema di shooting modulare, facilmente estendibile e utilizzabile come base per futuri videogiochi FPS.
+
+---
+
+## 📸 Video & Media
