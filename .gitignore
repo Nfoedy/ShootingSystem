@@ -43,3 +43,8 @@ Thumbs.db
 *.dll
 *.dylib
 *.so
+
+
+# Visual Studio generated files
+*.slnx
+UpgradeLog.htm
