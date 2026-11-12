@@ -5,32 +5,7 @@ DerivedDataCache/
 Intermediate/
 Saved/
 
-# Visual Studio / Rider / VS Code
-.vs/
-.vscode/
-.idea/
-*.VC.db
-*.VC.opendb
-*.sln
-*.suo
-*.user
-*.userprefs
-*.opensdf
-*.sdf
-*.code-workspace
-
-# Logs
-*.log
-
-# Operating System
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.temp
-
-# Unreal Engine - Generated files
+# Unreal Engine - Generated build files
 *.generated.h
 *.target
 *.modules
@@ -38,13 +13,37 @@ Thumbs.db
 # Unreal Engine - Config backups
 *.ini.backup
 
+# Visual Studio / Rider / VS Code
+
+.vs/
+.vscode/
+.idea/
+
+*.VC.db
+*.VC.opendb
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.opensdf
+*.sdf
+*.code-workspace
+
+# Visual Studio - Upgrade logs
+UpgradeLog*.htm
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Operating System
+.DS_Store
+Thumbs.db
+
 # Compiled binaries
 *.exe
 *.dll
 *.dylib
 *.so
-
-
-# Visual Studio generated files
-*.slnx
-UpgradeLog.htm
