@@ -7,8 +7,12 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
+#include "Engine/Engine.h"
+#include "Components/SceneComponent.h"
+#include "Components/CombatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ShootingSystem.h"
+
 
 AShootingSystemCharacter::AShootingSystemCharacter()
 {
@@ -42,6 +46,23 @@ AShootingSystemCharacter::AShootingSystemCharacter()
 	// Configure character movement
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 	GetCharacterMovement()->AirControl = 0.5f;
+
+	// Combat Component
+	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+
+	// Weapon Attach Point
+	WeaponAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponAttachPoint"));
+	WeaponAttachPoint->SetupAttachment(FirstPersonMesh);
+
+}
+
+void AShootingSystemCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!IsValid(CombatComponent)) return;
+
+	CombatComponent->InitializeStartingWeapon(WeaponAttachPoint);
 }
 
 void AShootingSystemCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -59,6 +80,9 @@ void AShootingSystemCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootingSystemCharacter::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AShootingSystemCharacter::LookInput);
+
+		// Fire
+		EnhancedInputComponent->BindAction(CustomFireAction, ETriggerEvent::Started, this, &AShootingSystemCharacter::OnFirePressed);
 	}
 	else
 	{
@@ -117,4 +141,18 @@ void AShootingSystemCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+
+void AShootingSystemCharacter::OnFirePressed()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Fire Input Received!"));
+	}
+
+	if (!IsValid(CombatComponent)) return;
+
+	CombatComponent->FireWeapon();
+
 }
