@@ -3,6 +3,7 @@
 #include "Components/ArrowComponent.h"
 
 // Debug
+#include "Engine/World.h"
 #include "Engine/Engine.h"
 #include "DrawDebugHelpers.h"
 
@@ -32,42 +33,58 @@ AWeaponBase::AWeaponBase()
 }
 
 
-void AWeaponBase::Fire()
-{
-    if (!GetWorld()) return;
- 
-    const FVector Start = MuzzlePoint->GetComponentLocation();
-    const FVector Direction = MuzzlePoint->GetForwardVector();
-    const FVector End = Start + (Direction * TraceRange);
 
-    FHitResult Hit;
+void AWeaponBase::Fire(const FVector& CameraStart, const FVector& CameraDirection)
+{
+    UWorld* World = GetWorld();
+
+    if (!IsValid(World)) return;
+    if (!IsValid(MuzzlePoint)) return;
+
+    const FVector AimDirection = CameraDirection.GetSafeNormal();
+
+    if (AimDirection.IsNearlyZero()) return;
 
     FCollisionQueryParams Params;
     Params.AddIgnoredActor(this);
 
-    const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
-    
-    DrawDebugLine(
-        GetWorld(),
-        Start,
-        bHit ? Hit.ImpactPoint : End,
-        bHit ? FColor::Green : FColor::Red,
-        false,
-        5.0f,
-        0,
-        2.0f
-    );
+    if (AActor* WeaponOwner = GetOwner())
+    {
+        Params.AddIgnoredActor(WeaponOwner);
+    }
 
+    const FVector CameraEnd = CameraStart + AimDirection * TraceRange;
+
+    FHitResult CameraHit;
+    const bool bCameraHit = World->LineTraceSingleByChannel(CameraHit, CameraStart, CameraEnd, ECC_Visibility, Params);
+
+    const FVector TargetPoint = bCameraHit ? CameraHit.ImpactPoint : CameraEnd;
+
+    const FVector MuzzleStart = MuzzlePoint->GetComponentLocation();
+
+    const FVector ShotDirection = (TargetPoint - MuzzleStart).GetSafeNormal();
+
+    const FVector WeaponEnd = TargetPoint + ShotDirection * 10.0f;
+
+    FHitResult WeaponHit;
+    const bool bWeaponHit = World->LineTraceSingleByChannel(WeaponHit, MuzzleStart, WeaponEnd, ECC_Visibility, Params);
+
+    DrawDebugLine(World, CameraStart, TargetPoint, FColor::Blue, false, 3.0f, 0, 1.0f);
+
+    DrawDebugLine(World, MuzzleStart, bWeaponHit ? WeaponHit.ImpactPoint : TargetPoint, bWeaponHit ? FColor::Green : FColor::Red, false, 3.0f, 0, 2.0f);
 
     if (GEngine)
     {
-        if (bHit)
+        if (bWeaponHit)
         {
             GEngine->AddOnScreenDebugMessage(
                 -1,
                 3.0f,
                 FColor::Green,
-                FString::Printf(TEXT("Hit: %s"), *GetNameSafe(Hit.GetActor()))
+                FString::Printf(
+                    TEXT("Hit: %s"),
+                    *GetNameSafe(WeaponHit.GetActor())
+                )
             );
         }
         else
@@ -80,5 +97,4 @@ void AWeaponBase::Fire()
             );
         }
     }
-
 }

@@ -54,10 +54,12 @@ void UCombatComponent::EquipWeapon(AWeaponBase* NewWeapon)
 }
 
 
-void UCombatComponent::FireWeapon()
+
+void UCombatComponent::FireWeapon(const FVector& CameraStart, const FVector& CameraDirection)
 {
 	if (!IsValid(EquippedWeapon)) return;
 
-	EquippedWeapon->Fire();
+	EquippedWeapon->Fire(CameraStart, CameraDirection);
 }
+
 

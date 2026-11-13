@@ -39,7 +39,7 @@ public:
 	void EquipWeapon(AWeaponBase* NewWeapon);
 
 	UFUNCTION()
-	void FireWeapon();
+	void FireWeapon(const FVector& CameraStart, const FVector& CameraDirection);
 
 
 };

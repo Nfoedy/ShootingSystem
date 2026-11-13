@@ -33,7 +33,7 @@ public:
 
 	AWeaponBase();
 
-	UFUNCTION(BlueprintCallable)
-	void Fire();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void Fire(const FVector& CameraStart, const FVector& CameraDirection);
 
 };

@@ -146,13 +146,12 @@ void AShootingSystemCharacter::DoJumpEnd()
 
 void AShootingSystemCharacter::OnFirePressed()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Fire Input Received!"));
-	}
-
 	if (!IsValid(CombatComponent)) return;
+	if (!IsValid(FirstPersonCameraComponent)) return;
 
-	CombatComponent->FireWeapon();
+	const FVector CameraStart = FirstPersonCameraComponent->GetComponentLocation();
 
+	const FVector CameraDirection = FirstPersonCameraComponent->GetForwardVector();
+
+	CombatComponent->FireWeapon(CameraStart, CameraDirection);
 }
