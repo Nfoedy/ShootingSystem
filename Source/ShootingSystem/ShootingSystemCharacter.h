@@ -40,6 +40,9 @@ class AShootingSystemCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> WeaponAttachPoint;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true", ClampMin = "1.0"))
+	float InteractionRange = 250.0f;
+
 
 
 protected:
@@ -62,6 +65,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> CustomFireAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> PickupAction;
 
 
 	
@@ -92,9 +98,11 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 
-
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void OnFirePressed();
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void OnPickupPressed();
 
 protected:
 

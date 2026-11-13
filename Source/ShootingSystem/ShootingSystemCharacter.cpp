@@ -8,6 +8,8 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "Engine/Engine.h"
+#include "Weapons/WeaponBase.h"
+#include "Engine/World.h"
 #include "Components/SceneComponent.h"
 #include "Components/CombatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -54,6 +56,9 @@ AShootingSystemCharacter::AShootingSystemCharacter()
 	WeaponAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponAttachPoint"));
 	WeaponAttachPoint->SetupAttachment(FirstPersonMesh);
 
+	// Interaction 
+	InteractionRange = 250.0f;
+
 }
 
 void AShootingSystemCharacter::BeginPlay()
@@ -83,6 +88,9 @@ void AShootingSystemCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Fire
 		EnhancedInputComponent->BindAction(CustomFireAction, ETriggerEvent::Started, this, &AShootingSystemCharacter::OnFirePressed);
+
+		// Pickup
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &AShootingSystemCharacter::OnPickupPressed);
 	}
 	else
 	{
@@ -155,3 +163,37 @@ void AShootingSystemCharacter::OnFirePressed()
 
 	CombatComponent->FireWeapon(CameraStart, CameraDirection);
 }
+
+
+
+void AShootingSystemCharacter::OnPickupPressed()
+{
+	if (!IsValid(CombatComponent)) return;
+	if (!IsValid(FirstPersonCameraComponent)) return;
+
+	UWorld* World = GetWorld();
+	if (!IsValid(World)) return;
+
+	const FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+	const FVector Direction = FirstPersonCameraComponent->GetForwardVector();
+	const FVector End = Start + (Direction * InteractionRange);
+
+	FHitResult Hit;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	const bool bHit = World->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+
+	// Debug temporaneo
+	DrawDebugLine(World, Start,	bHit ? Hit.ImpactPoint : End, bHit ? FColor::Green : FColor::Red, false, 3.0f, 0, 2.0f);
+
+	if (!bHit) return;
+
+	AWeaponBase* Weapon = Cast<AWeaponBase>(Hit.GetActor());
+
+	if (!IsValid(Weapon)) return;
+
+	CombatComponent->EquipWeapon(Weapon);
+}
+

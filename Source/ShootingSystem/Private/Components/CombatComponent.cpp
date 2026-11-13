@@ -17,6 +17,8 @@ void UCombatComponent::InitializeStartingWeapon(USceneComponent* AttachParent)
 {
 	if (!IsValid(AttachParent)) return;
 
+	WeaponAttachPoint = AttachParent;
+
 	if (!StartingWeaponClass) return;
 
 	if (IsValid(EquippedWeapon)) return;
@@ -25,8 +27,6 @@ void UCombatComponent::InitializeStartingWeapon(USceneComponent* AttachParent)
 	AActor* Owner = GetOwner();
 
 	if (!IsValid(World) || !IsValid(Owner)) return;
-
-	WeaponAttachPoint = AttachParent;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = Owner;

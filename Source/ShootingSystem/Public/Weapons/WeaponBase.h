@@ -6,6 +6,7 @@
 
 class USkeletalMeshComponent;
 class UArrowComponent;
+class UBoxComponent;
 
 UCLASS()
 class SHOOTINGSYSTEM_API AWeaponBase : public AActor
@@ -29,11 +30,18 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UArrowComponent> MuzzlePoint;
 
+
+	UPROPERTY()
+	TObjectPtr<UBoxComponent> PickupCollision;
+
 public:	
 
 	AWeaponBase();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void Fire(const FVector& CameraStart, const FVector& CameraDirection);
+
+	UFUNCTION()
+	void SetPickupEnabled(bool bEnabled);
 
 };

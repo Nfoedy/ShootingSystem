@@ -1,6 +1,7 @@
 #include "Weapons/WeaponBase.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Components/BoxComponent.h"
 
 // Debug
 #include "Engine/World.h"
@@ -28,6 +29,10 @@ AWeaponBase::AWeaponBase()
     MuzzlePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("MuzzlePoint"));
     MuzzlePoint->SetupAttachment(WeaponMesh);
     MuzzlePoint->SetArrowSize(0.3f);
+
+    // Pickup Collision
+    PickupCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("PickupCollision"));
+    PickupCollision->SetupAttachment(SceneRoot);
 
 
 }
@@ -97,4 +102,13 @@ void AWeaponBase::Fire(const FVector& CameraStart, const FVector& CameraDirectio
             );
         }
     }
+}
+
+
+
+void AWeaponBase::SetPickupEnabled(bool bEnabled)
+{
+    if (!IsValid(PickupCollision)) return;
+
+    PickupCollision->SetCollisionEnabled(bEnabled ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
 }
