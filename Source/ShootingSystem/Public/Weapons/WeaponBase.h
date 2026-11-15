@@ -1,5 +1,4 @@
 #pragma once
-
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
@@ -11,37 +10,33 @@ class UBoxComponent;
 UCLASS()
 class SHOOTINGSYSTEM_API AWeaponBase : public AActor
 {
-	GENERATED_BODY()
-	
-private:	
+    GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USceneComponent> SceneRoot;
+private:
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UBoxComponent> PickupCollision;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UArrowComponent> MuzzlePoint;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true", ClampMin = "1.0"))
-	float TraceRange;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true", ClampMin = "1.0"))
+    float TraceRange = 2000.0f;
 
+protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UArrowComponent> MuzzlePoint;
+    virtual void BeginPlay() override;
 
+public:
 
-	UPROPERTY()
-	TObjectPtr<UBoxComponent> PickupCollision;
+    AWeaponBase();
 
-public:	
+    UFUNCTION(BlueprintCallable, Category = "Weapon")
+    void Fire(const FVector& CameraStart, const FVector& CameraDirection);
 
-	AWeaponBase();
-
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void Fire(const FVector& CameraStart, const FVector& CameraDirection);
-
-	UFUNCTION()
-	void SetPickupEnabled(bool bEnabled);
-
+    UFUNCTION(BlueprintCallable, Category = "Weapon")
+    void SetPickupEnabled(bool bEnabled);
 };

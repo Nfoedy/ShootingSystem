@@ -41,17 +41,29 @@ void UCombatComponent::InitializeStartingWeapon(USceneComponent* AttachParent)
 
 
 
+
 void UCombatComponent::EquipWeapon(AWeaponBase* NewWeapon)
 {
-	if(!IsValid(NewWeapon)) return;
+    if (!IsValid(NewWeapon)) return;
+    if (!IsValid(WeaponAttachPoint)) return;
+	if (IsValid(EquippedWeapon)) return;
+	
+	AActor* OwnerActor = GetOwner();
+    if (!IsValid(OwnerActor)) return;
 
-	if (!IsValid(WeaponAttachPoint)) return;
+	NewWeapon->SetPickupEnabled(false);
 
-	const bool bAttached = NewWeapon->AttachToComponent(WeaponAttachPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	if (!bAttached) return;
-
+    const bool bAttached = NewWeapon->AttachToComponent(WeaponAttachPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	if (!bAttached) {
+		NewWeapon->SetPickupEnabled(true);
+		return;
+	}
+	
+	NewWeapon->SetOwner(OwnerActor);
+	
 	EquippedWeapon = NewWeapon;
 }
+
 
 
 

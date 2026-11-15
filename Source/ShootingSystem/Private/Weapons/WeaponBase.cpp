@@ -1,29 +1,31 @@
 #include "Weapons/WeaponBase.h"
+
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
-
 // Debug
-#include "Engine/World.h"
-#include "Engine/Engine.h"
 #include "DrawDebugHelpers.h"
+#include "Engine/World.h"
+
 
 
 AWeaponBase::AWeaponBase()
 {
     PrimaryActorTick.bCanEverTick = false;
 
-    // Scene Root
-    SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-    SetRootComponent(SceneRoot);
-
-
     // Weapon Mesh
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-    WeaponMesh->SetupAttachment(SceneRoot);
+    SetRootComponent(WeaponMesh);
 
-    // Trace Range
-    TraceRange = 2000.0f;
+    WeaponMesh->SetCollisionObjectType(ECC_PhysicsBody);
+    WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+    WeaponMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+    WeaponMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+    WeaponMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+    WeaponMesh->SetCollisionResponseToChannel(ECC_PhysicsBody, ECR_Block);
+
+    WeaponMesh->SetEnableGravity(true);
 
     // Muzzle Point
     MuzzlePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("MuzzlePoint"));
@@ -32,9 +34,21 @@ AWeaponBase::AWeaponBase()
 
     // Pickup Collision
     PickupCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("PickupCollision"));
-    PickupCollision->SetupAttachment(SceneRoot);
+    PickupCollision->SetupAttachment(WeaponMesh);
+
+    PickupCollision->SetCollisionObjectType(ECC_WorldDynamic);
+    PickupCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    PickupCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+    PickupCollision->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+    PickupCollision->SetSimulatePhysics(false);
+}
 
 
+void AWeaponBase::BeginPlay()
+{
+    Super::BeginPlay();
+
+    SetPickupEnabled(true);
 }
 
 
@@ -47,7 +61,6 @@ void AWeaponBase::Fire(const FVector& CameraStart, const FVector& CameraDirectio
     if (!IsValid(MuzzlePoint)) return;
 
     const FVector AimDirection = CameraDirection.GetSafeNormal();
-
     if (AimDirection.IsNearlyZero()) return;
 
     FCollisionQueryParams Params;
@@ -58,57 +71,61 @@ void AWeaponBase::Fire(const FVector& CameraStart, const FVector& CameraDirectio
         Params.AddIgnoredActor(WeaponOwner);
     }
 
+    // Camera Trace
     const FVector CameraEnd = CameraStart + AimDirection * TraceRange;
 
     FHitResult CameraHit;
+
     const bool bCameraHit = World->LineTraceSingleByChannel(CameraHit, CameraStart, CameraEnd, ECC_Visibility, Params);
 
     const FVector TargetPoint = bCameraHit ? CameraHit.ImpactPoint : CameraEnd;
 
+    // Weapon Trace
     const FVector MuzzleStart = MuzzlePoint->GetComponentLocation();
-
     const FVector ShotDirection = (TargetPoint - MuzzleStart).GetSafeNormal();
+
+    if (ShotDirection.IsNearlyZero()) return;
 
     const FVector WeaponEnd = TargetPoint + ShotDirection * 10.0f;
 
     FHitResult WeaponHit;
+
     const bool bWeaponHit = World->LineTraceSingleByChannel(WeaponHit, MuzzleStart, WeaponEnd, ECC_Visibility, Params);
 
+    // Visualizzazione delle traiettorie
     DrawDebugLine(World, CameraStart, TargetPoint, FColor::Blue, false, 3.0f, 0, 1.0f);
 
-    DrawDebugLine(World, MuzzleStart, bWeaponHit ? WeaponHit.ImpactPoint : TargetPoint, bWeaponHit ? FColor::Green : FColor::Red, false, 3.0f, 0, 2.0f);
-
-    if (GEngine)
-    {
-        if (bWeaponHit)
-        {
-            GEngine->AddOnScreenDebugMessage(
-                -1,
-                3.0f,
-                FColor::Green,
-                FString::Printf(
-                    TEXT("Hit: %s"),
-                    *GetNameSafe(WeaponHit.GetActor())
-                )
-            );
-        }
-        else
-        {
-            GEngine->AddOnScreenDebugMessage(
-                -1,
-                3.0f,
-                FColor::Red,
-                TEXT("No Hit!")
-            );
-        }
-    }
+    DrawDebugLine(World, MuzzleStart, bWeaponHit ? WeaponHit.ImpactPoint : WeaponEnd, bWeaponHit ? FColor::Green : FColor::Red,
+        false,
+        3.0f,
+        0,
+        2.0f
+    );
 }
 
 
 
 void AWeaponBase::SetPickupEnabled(bool bEnabled)
 {
+    if (!IsValid(WeaponMesh)) return;
     if (!IsValid(PickupCollision)) return;
 
-    PickupCollision->SetCollisionEnabled(bEnabled ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+    if (bEnabled)
+    {
+        // Arma a terra
+        WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        WeaponMesh->SetEnableGravity(true);
+        WeaponMesh->SetSimulatePhysics(true);
+
+        PickupCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    }
+    else
+    {
+        // Arma equipaggiata
+        WeaponMesh->SetSimulatePhysics(false);
+        WeaponMesh->SetEnableGravity(false);
+        WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+        PickupCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    }
 }
